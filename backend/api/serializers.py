@@ -1,10 +1,7 @@
 from django.utils import timezone
-from rest_framework.serializers import ModelSerializer, StringRelatedField, DateTimeField, ImageField
-from .models import Student, Parent, Receipt, Bus
-import qrcode
-from PIL import Image, ImageDraw
-from io import BytesIO
-from django.core.files import File
+from rest_framework.serializers import ModelSerializer
+from .models import Location, Route, Student, Parent, Receipt, Bus, Trip
+
 
 
 
@@ -24,7 +21,7 @@ class ReceiptSerializer(ModelSerializer):
     
     class Meta:
         model = Receipt
-        fields = ['bus', 'active', 'student', 'issued']
+        fields = ['student', 'bus', 'location', 'active', 'issued']
 
 class StudentSerializer(ModelSerializer):
 
@@ -32,3 +29,20 @@ class StudentSerializer(ModelSerializer):
         model = Student
         fields = '__all__'
 
+class LocationSerializer(ModelSerializer):
+
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+class RouteSerializer(ModelSerializer):
+
+    class Meta:
+        model = Route
+        fields = '__all__'
+
+class TripSerializer(ModelSerializer):
+
+    class Meta:
+        model = Trip
+        fields = '__all__'

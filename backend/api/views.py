@@ -25,3 +25,18 @@ class ReceiptViewset(viewsets.ModelViewSet):
     queryset = Receipt.objects.all()
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = ReceiptSerializer
+
+class LocationViewset(viewsets.ModelViewSet):
+    queryset = Location.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = LocationSerializer
+
+class TripViewset(viewsets.ModelViewSet):
+    queryset = Trip.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = TripSerializer
+
+class RouteViewset(viewsets.ModelViewSet):
+    queryset = Route.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = RouteSerializer

@@ -35,6 +35,41 @@ class Bus(models.Model):
     def __unicode__(self):
         return 
 
+class Trip(models.Model):
+    
+    class TripType(models.TextChoices):
+        MORNING = 'Morning'
+        EVENING = 'Evening'
+
+    trip_type = models.CharField(max_length=12, choices=TripType.choices)
+    bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return 
+
+    def __unicode__(self):
+        return 
+
+
+class Location(models.Model):
+    name = models.CharField(max_length=25)
+    price = models.IntegerField(verbose_name='cost')
+    
+
+    def __str__(self):
+        return self.name
+
+class Route(models.Model):
+    locations = models.ForeignKey(Location, on_delete=models.CASCADE)
+    
+
+    def __str__(self):
+        return self.id
+
+    def __unicode__(self):
+        return 
+
+
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -69,12 +104,13 @@ class Parent(models.Model):
         return 
 
 class Receipt(models.Model):
-    qr_code = models.ImageField(blank=True, upload_to='qrcode_location')
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     active = models.BooleanField(verbose_name='Valid', default=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     issued = models.DateTimeField(editable=False, serialize=True)
     serial = models.CharField(max_length=8, blank=False, default=get_random_string(8))
+    qr_code = models.ImageField(blank=True, upload_to='qrcode_location')
     
     class ReceiptType(models.TextChoices):
         WEEKLY = 'Weekly'
@@ -95,11 +131,11 @@ class Receipt(models.Model):
     def save(self,*args,**kwargs):
       qrcode_img=qrcode.make(self.issued)
       canvas=Image.new("RGB", (310,310),"white")
-      draw=ImageDraw.Draw(canvas)
+      ImageDraw.Draw(canvas)
       canvas.paste(qrcode_img)
       buffer=BytesIO()
       canvas.save(buffer,"PNG")
-      self.image.save(f'{self.student}-{self.issued}-{self.id}',File(buffer),save=False)
+      self.image.save(f'{self.student}-{self.issued}-{self.location}-{self.id}',File(buffer),save=False)
       canvas.close()
       super().save(*args,**kwargs)
 
