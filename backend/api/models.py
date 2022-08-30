@@ -52,8 +52,8 @@ class Trip(models.Model):
 
 
 class Location(models.Model):
-    name = models.CharField(max_length=25)
-    price = models.IntegerField(verbose_name='cost')
+    name = models.CharField(max_length=25, blank=False)
+    price = models.IntegerField(verbose_name='cost', default=0)
     
 
     def __str__(self):
@@ -105,9 +105,9 @@ class Parent(models.Model):
 
 class Receipt(models.Model):
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     active = models.BooleanField(verbose_name='Valid', default=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, related_name="home", on_delete=models.CASCADE, blank=True, null=True)
     issued = models.DateTimeField(editable=False, serialize=True)
     serial = models.CharField(max_length=8, blank=False, default=get_random_string(8))
     qr_code = models.ImageField(blank=True, upload_to='qrcode_location')
