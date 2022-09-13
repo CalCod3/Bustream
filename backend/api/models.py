@@ -32,9 +32,6 @@ class Bus(models.Model):
     def __str__(self):
         return self.registration
 
-    def __unicode__(self):
-        return 
-
 class Trip(models.Model):
     
     class TripType(models.TextChoices):
@@ -45,31 +42,25 @@ class Trip(models.Model):
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
 
     def __str__(self):
-        return 
-
-    def __unicode__(self):
-        return 
+        return self.trip_type
 
 
-class Location(models.Model):
-    name = models.CharField(max_length=25, blank=False)
-    price = models.IntegerField(verbose_name='cost', default=0)
+class Route(models.Model):
+    name = models.CharField(max_length=25, blank=False)  
     
 
     def __str__(self):
         return self.name
 
-class Route(models.Model):
-    locations = models.ForeignKey(Location, on_delete=models.CASCADE)
+
+class Location(models.Model):
+    name = models.CharField(max_length=25, blank=False)
+    price = models.IntegerField(verbose_name='cost', default=0)
+    route = models.ForeignKey(Route, on_delete=models.CASCADE)
     
 
     def __str__(self):
-        return self.id
-
-    def __unicode__(self):
-        return 
-
-
+        return self.name
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -85,9 +76,6 @@ class Student(models.Model):
     def __str__(self):
         return self.first_name
 
-    def __unicode__(self):
-        return 
-
 class Parent(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, related_name="child", on_delete=models.CASCADE, blank=True, null=True)
@@ -100,16 +88,13 @@ class Parent(models.Model):
     def __str__(self):
         return self.first_name
 
-    def __unicode__(self):
-        return 
-
 class Receipt(models.Model):
-    bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
-    active = models.BooleanField(verbose_name='Valid', default=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, related_name="home", on_delete=models.CASCADE, blank=True, null=True)
     issued = models.DateTimeField(editable=False, serialize=True)
-    serial = models.CharField(max_length=8, blank=False, default=get_random_string(8))
+    bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
+    active = models.BooleanField(verbose_name='Valid', default=False)
+    serial = models.CharField(max_length=8, blank=False, default="dferwere")
     qr_code = models.ImageField(blank=True, upload_to='qrcode_location')
     
     class ReceiptType(models.TextChoices):
@@ -120,13 +105,6 @@ class Receipt(models.Model):
 
     receipt_type = models.CharField(max_length=12, choices=ReceiptType.choices)
 
-    
-
-    def __str__(self):
-        return self.serial
-
-    def __unicode__(self):
-        return
 
     def save(self,*args,**kwargs):
       qrcode_img=qrcode.make(self.issued)
@@ -160,3 +138,5 @@ class Receipt(models.Model):
 
     Timer(delay, set_active,()).start()
 
+    def __str__(self):
+        return self.serial
